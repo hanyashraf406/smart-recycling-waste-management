@@ -1,4 +1,4 @@
-# trash
+# trash to cash
 
 A new Flutter project.
 
