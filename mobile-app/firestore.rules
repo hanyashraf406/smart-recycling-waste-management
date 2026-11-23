@@ -1,0 +1,155 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== 1. قواعد العدادات (counters) ====================
+    match /counters/{document} {
+      // السماح للجميع بالقراءة (التطبيق يحتاجها)
+      allow read: if true;
+      
+      // السماح للجميع بالكتابة مؤقتاً (لأن التطبيق يحدث العدادات)
+      // يمكن تشديدها لاحقاً لتكون للموظفين فقط
+      allow write: if true;
+    }
+    
+    // ==================== 2. قواعد المستودعات (warehouses) ====================
+    match /warehouses/{warehouseId} {
+      // أي شخص مسجل دخول يقدر يقرأ المستودعات
+      allow read: if request.auth != null;
+      
+      // الموظف فقط يقدر يضيف أو يعدل مستودعات
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+    }
+    
+    // ==================== 3. قواعد المواد (materials) ====================
+    match /materials/{materialId} {
+      // أي شخص مسجل دخول يقدر يقرأ المواد
+      allow read: if request.auth != null;
+      
+      // الموظف فقط يقدر يضيف أو يعدل مواد
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+    }
+    
+    // ==================== 4. قواعد التقارير (reports) ====================
+    match /reports/{reportId} {
+      // أي شخص مسجل دخول يقدر يقرأ التقارير
+      allow read: if request.auth != null;
+      
+      // الموظف فقط يقدر ينشئ تقرير جديد
+      allow create: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+      
+      // ممنوع التعديل أو الحذف من التطبيق
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ==================== 5. قواعد الموظفين (employees) ====================
+    match /employees/{employeeId} {
+      // الموظف يقدر يقرأ ملفه الشخصي فقط
+      allow read: if request.auth != null && request.auth.uid == employeeId;
+      
+      // الموظف يقدر يعدل ملفه الشخصي فقط
+      allow write: if request.auth != null && request.auth.uid == employeeId;
+      
+      // السماح بإنشاء موظف جديد أثناء التسجيل
+      allow create: if request.auth != null && request.auth.uid == employeeId;
+    }
+
+    // ==================== 6. قواعد المستخدمين (users) ====================
+    match /users/{userId} {
+      // المستخدم يقدر يقرأ ملفه والموظف يقدر يقرأ أي مستخدم
+      allow read: if request.auth != null && (
+        request.auth.uid == userId ||
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid))
+      );
+      
+      // المستخدم يقدر يحدث ملفه فقط، والموظف يقدر يحدث أي مستخدم
+      allow write: if request.auth != null && (
+        request.auth.uid == userId ||
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid))
+      );
+      
+      // السماح بإنشاء مستخدم جديد أثناء التسجيل
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ==================== 7. قواعد عمليات التدوير (recycling_processes) ====================
+    match /recycling_processes/{processId} {
+      // السماح للكل بالقراءة (المستخدم والموظف)
+      allow read: if request.auth != null;
+      
+      // السماح للموظف فقط بإنشاء معاملات جديدة
+      allow create: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+      
+      // السماح للموظف فقط بتحديث المعاملة
+      allow update: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+      
+      // ممنوع حذف المعاملات
+      allow delete: if false;
+    }
+    
+    // ==================== 8. قواعد المخزون (inventory) ====================
+    match /inventory/{inventoryId} {
+      // أي شخص مسجل دخول يقدر يقرأ المخزون
+      allow read: if request.auth != null;
+      
+      // الموظف فقط يقدر يعدل المخزون
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+    }
+    
+    // ==================== 9. قواعد الإحصائيات اليومية (daily_stats) ====================
+    match /daily_stats/{statsId} {
+      // أي شخص مسجل دخول يقدر يقرأ الإحصائيات
+      allow read: if request.auth != null;
+      
+      // الموظف فقط يقدر يعدل الإحصائيات
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+    }
+
+    // ==================== 10. قواعد التقييمات (reviews) ====================
+    match /reviews/{reviewId} {
+      // أي شخص مسجل دخول يقدر يقرأ التقييمات
+      allow read: if request.auth != null;
+      
+      // أي شخص مسجل دخول يقدر ينشئ تقييم جديد (الموظف بينشئه تلقائياً)
+      allow create: if request.auth != null;
+      
+      // المستخدم صاحب التقييم فقط يقدر يحدثه (لإضافة rating و comment)
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+      
+      // ممنوع حذف التقييمات
+      allow delete: if false;
+    }
+    
+    // ==================== 11. قواعد عمليات التدوير القديمة (recycle_transactions) ====================
+    match /recycle_transactions/{transactionId} {
+      // السماح للكل بالقراءة (للتطبيقات القديمة)
+      allow read: if request.auth != null;
+      
+      // السماح للموظف فقط بإنشاء معاملات جديدة
+      allow create: if request.auth != null && 
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid));
+      
+      // السماح بتحديث حقل reviewCompleted فقط
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        exists(/databases/$(database)/documents/employees/$(request.auth.uid))
+      ) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviewCompleted']);
+      
+      allow delete: if false;
+    }
+    
+    // ==================== 12. منع الوصول لأي مجموعات أخرى ====================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
