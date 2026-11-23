@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - Trash To Cash</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="card">
+
+        <!-- LEFT SIDE -->
+        <div class="left">
+
+            <div class="logo-area">
+                <img src="../images/logo.svg" alt="Logo" class="logo-img">
+            </div>
+
+            <h2>Forgot Password?</h2>
+            <p class="subtitle">Enter your email and we'll send you an OTP code to reset your password.</p>
+
+            <div class="input-group">
+                <i class="fa-regular fa-envelope"></i>
+                <input type="email" id="resetEmail" placeholder="Email Address" required autocomplete="off">
+            </div>
+
+            <button type="button" id="sendResetBtn" class="signin-btn">Send OTP Code</button>
+
+            <div id="message" style="display:none;"></div>
+
+            <p class="login-link">
+                Remember your password? <a href="../trash to cash sign in/index.html">Sign In</a>
+            </p>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+            <div class="steps">
+                <div class="step active">
+                    <span class="step-dot"></span>
+                    <span class="step-text">Email Address</span>
+                </div>
+                <div class="step">
+                    <span class="step-dot"></span>
+                    <span class="step-text">OTP</span>
+                </div>
+                <div class="step">
+                    <span class="step-dot"></span>
+                    <span class="step-text">New Password</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="../firebase-config.js"></script>
+
+    <!-- Forgot Password Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>

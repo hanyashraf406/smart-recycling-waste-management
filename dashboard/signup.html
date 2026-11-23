@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trash To Cash | Admin Sign Up</title>
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="brand-panel">
+      <div class="brand-copy">
+        <div class="brand-mark">
+          <img src="homedashboard/assets/trash.svg" alt="TRASH TO CASH" style="width: 200px; height: auto;">
+        </div>
+
+        <h1>Create an admin account</h1>
+        <p>
+          Sign up once with your warehouse and start managing your team.
+        </p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-chip">Warehouse Access</div>
+        <div class="feature-chip">Secure sign up</div>
+        <div class="feature-chip">Profile stored in Firestore</div>
+      </div>
+    </section>
+
+    <section class="auth-card-wrap">
+      <div class="auth-card">
+        <div class="brand-mark auth-brand-mark">
+          <img src="homedashboard/assets/trash.svg" alt="TRASH TO CASH" style="width: 180px; height: auto;">
+        </div>
+
+        <h2>Admin Sign Up</h2>
+        <p>Create an admin account linked to your warehouse.</p>
+
+        <form id="signupForm" class="auth-form" novalidate>
+          <div class="field">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" name="fullName" type="text" placeholder="Project admin" autocomplete="name" required>
+          </div>
+
+          <div class="field">
+            <label for="signupEmail">Email</label>
+            <input id="signupEmail" name="email" type="email" placeholder="admin@greenbin.com" autocomplete="email" required>
+          </div>
+
+          <div class="field">
+            <label for="signupPassword">Password</label>
+            <input id="signupPassword" name="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" required>
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Repeat password" autocomplete="new-password" required>
+          </div>
+
+          <!-- ✅ اختيار المستودع -->
+          <div class="field">
+            <label for="warehouseSelect">Warehouse</label>
+            <select id="warehouseSelect" name="warehouse" required>
+              <option value="">-- Select Warehouse --</option>
+              <option value="WH-001">Madinaty (WH-001)</option>
+              <option value="WH-002">Al Shorouk (WH-002)</option>
+              <option value="WH-003">Al Rehab (WH-003)</option>
+              <option value="WH-004">New Cairo (WH-004)</option>
+              <option value="WH-005">6th of October (WH-005)</option>
+              <option value="WH-006">Sheikh Zayed (WH-006)</option>
+              <option value="WH-007">Al Obour (WH-007)</option>
+            </select>
+          </div>
+
+          <button class="primary-action" type="submit">Create Account</button>
+        </form>
+
+        <p id="authMessage" class="auth-message"></p>
+
+        <div class="auth-footer">
+          <span>Already have an account?</span>
+          <a href="./login.html">Log In</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyD-NDO4JdZCvyzWVCW2-6vFJqFICofqT7k",
+        authDomain: "cach-6ebd3.firebaseapp.com",
+        projectId: "cach-6ebd3",
+        storageBucket: "cach-6ebd3.firebasestorage.app",
+        messagingSenderId: "379255642460",
+        appId: "1:379255642460:web:72de61f8c27d2b09bc0199",
+        measurementId: "G-G3GBEEC83E"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // ✅ قاموس المستودعات
+    const WAREHOUSES = {
+      'WH-001': 'Madinaty',
+      'WH-002': 'Al Shorouk',
+      'WH-003': 'Al Rehab',
+      'WH-004': 'New Cairo',
+      'WH-005': '6th of October',
+      'WH-006': 'Sheikh Zayed',
+      'WH-007': 'Al Obour'
+    };
+    
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const warehouseId = document.getElementById('warehouseSelect').value;
+      const messageEl = document.getElementById('authMessage');
+      
+      if (!fullName || !email || !password || !confirmPassword || !warehouseId) {
+        messageEl.textContent = 'Please fill all fields.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        messageEl.textContent = 'Passwords do not match.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      if (password.length < 6) {
+        messageEl.textContent = 'Password must be at least 6 characters.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      messageEl.textContent = 'Creating admin account...';
+      messageEl.style.color = '#3b82f6';
+      
+      try {
+        // ✅ التأكد إن الإيميل مش موجود في super_admins
+        const superAdminDoc = await getDoc(doc(db, 'super_admins', email));
+        if (superAdminDoc.exists()) {
+          messageEl.textContent = 'This email is already registered as Super Admin.';
+          messageEl.style.color = '#ef4444';
+          return;
+        }
+        
+        // ✅ التأكد إن الإيميل مش موجود في admins
+        const adminDoc = await getDoc(doc(db, 'admins', email));
+        if (adminDoc.exists()) {
+          messageEl.textContent = 'This email is already registered.';
+          messageEl.style.color = '#ef4444';
+          return;
+        }
+        
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        const warehouseName = WAREHOUSES[warehouseId] || 'Unknown';
+        
+        // ✅ حفظ الأدمن في مجموعة admins
+        await setDoc(doc(db, 'admins', email), {
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName,
+          role: 'admin',
+          warehouseId: warehouseId,
+          warehouseName: warehouseName,
+          isActive: true,
+          createdAt: serverTimestamp()
+        });
+        
+        messageEl.textContent = 'Admin account created! Redirecting...';
+        messageEl.style.color = '#10b981';
+        
+        // ✅ تخزين بيانات الأدمن في localStorage
+        localStorage.setItem('adminUser', JSON.stringify({
+          email: email,
+          role: 'admin',
+          warehouseId: warehouseId,
+          warehouseName: warehouseName,
+          isAdmin: true
+        }));
+        
+        setTimeout(() => {
+          window.location.href = './homedashboard/homedashboard/index.html';
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Signup error:', error);
+        messageEl.textContent = 'Signup failed: ' + error.message;
+        messageEl.style.color = '#ef4444';
+      }
+    });
+  </script>
+</body>
+</html>

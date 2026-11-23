@@ -1,0 +1,208 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background: url("../images/background.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+/* MAIN CARD */
+.card {
+    width: 850px;
+    height: 480px;
+    background: #fff;
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* LEFT */
+.left {
+    width: 50%;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.logo-img {
+    width: 140px;
+    height: auto;
+}
+
+.left h2 {
+    color: #00C76A;
+    margin-bottom: 8px;
+    font-size: 26px;
+    text-align: center;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* INPUTS */
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 40px;
+    border-radius: 8px;
+    border: 1px solid #000000;
+    outline: none;
+    font-size: 14px;
+}
+
+.input-group input:focus {
+    border-color: #00C76A;
+}
+
+.input-group i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.input-group i:first-child {
+    left: 12px;
+    color: #00C76A;
+}
+
+.toggle {
+    right: 12px;
+    cursor: pointer;
+    color: #555;
+}
+
+/* BUTTONS */
+.signin-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #00C76A;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.signin-btn:hover {
+    background: #00b05a;
+}
+
+.signin-btn:disabled {
+    background: #8a8a8a;
+    cursor: not-allowed;
+}
+
+/* Login Link */
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #555;
+}
+
+.login-link a {
+    color: #00C76A;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* RIGHT */
+.right {
+    width: 50%;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 30px;
+    border-left: 1px solid #b0b0b0;
+}
+
+/* STEPS */
+.steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 8px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #c0c0c0;
+    display: inline-block;
+}
+
+.step.active .step-dot {
+    background: #00C76A;
+    width: 14px;
+    height: 14px;
+}
+
+.step.done .step-dot {
+    background: #00C76A;
+}
+
+.step-text {
+    font-size: 17px;
+    font-weight: 500;
+    color: #999;
+}
+
+.step.active .step-text {
+    color: #00C76A;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.step.done .step-text {
+    color: #333;
+    font-weight: 600;
+}
+
+#message {
+    display: none;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+}

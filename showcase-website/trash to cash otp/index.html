@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - Trash To Cash</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="card">
+
+        <!-- LEFT SIDE -->
+        <div class="left">
+
+            <div class="logo-area">
+                <img src="../images/logo.svg" alt="Logo" class="logo-img">
+            </div>
+
+            <h2>OTP Verification</h2>
+            <p class="subtitle">We have sent a 6-digit code to your email</p>
+
+            <div class="otp-boxes">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+            </div>
+
+            <button type="button" id="verifyOtpBtn" class="signin-btn">Verify OTP</button>
+
+            <div id="message" style="display:none;"></div>
+
+            <p class="login-link">
+                Didn't receive the code? <a href="#" id="resendOtp">Resend OTP</a>
+            </p>
+            <p class="login-link">
+                <a href="../trash to cash sign in/index.html">Back to Sign In</a>
+            </p>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+            <div class="steps">
+                <div class="step done">
+                    <span class="step-dot"></span>
+                    <span class="step-text">Email Address</span>
+                </div>
+                <div class="step active">
+                    <span class="step-dot"></span>
+                    <span class="step-text">OTP</span>
+                </div>
+                <div class="step">
+                    <span class="step-dot"></span>
+                    <span class="step-text">New Password</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="../firebase-config.js"></script>
+
+    <!-- OTP Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>

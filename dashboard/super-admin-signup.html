@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trash To Cash | Super Admin Sign Up</title>
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="brand-panel">
+      <div class="brand-copy">
+        <div class="brand-mark">
+          <img src="homedashboard/assets/trash.svg" alt="TRASH TO CASH" style="width: 200px; height: auto;">
+        </div>
+
+        <h1>Create a super admin account</h1>
+        <p>
+          Super admin has full access to all warehouses. A secret key is required.
+        </p>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-chip">Full Access</div>
+        <div class="feature-chip">All Warehouses</div>
+        <div class="feature-chip">Secure</div>
+      </div>
+    </section>
+
+    <section class="auth-card-wrap">
+      <div class="auth-card">
+        <div class="brand-mark auth-brand-mark">
+          <img src="homedashboard/assets/trash.svg" alt="TRASH TO CASH" style="width: 180px; height: auto;">
+        </div>
+
+        <h2>Super Admin Sign Up</h2>
+        <p>Create a super admin account with full access to all warehouses.</p>
+
+        <form id="superAdminForm" class="auth-form" novalidate>
+          <div class="field">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" name="fullName" type="text" placeholder="Super Admin" autocomplete="name" required>
+          </div>
+
+          <div class="field">
+            <label for="signupEmail">Email</label>
+            <input id="signupEmail" name="email" type="email" placeholder="superadmin@greenbin.com" autocomplete="email" required>
+          </div>
+
+          <div class="field">
+            <label for="signupPassword">Password</label>
+            <input id="signupPassword" name="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" required>
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Repeat password" autocomplete="new-password" required>
+          </div>
+
+          <div class="field">
+            <label for="secretKey">Secret Key</label>
+            <input id="secretKey" name="secretKey" type="password" placeholder="Enter secret key" required>
+          </div>
+
+          <button class="primary-action" type="submit">Create Super Admin</button>
+        </form>
+
+        <p id="authMessage" class="auth-message"></p>
+
+        <div class="auth-footer">
+          <span>Already have an account?</span>
+          <a href="./login.html">Log In</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyD-NDO4JdZCvyzWVCW2-6vFJqFICofqT7k",
+        authDomain: "cach-6ebd3.firebaseapp.com",
+        projectId: "cach-6ebd3",
+        storageBucket: "cach-6ebd3.firebasestorage.app",
+        messagingSenderId: "379255642460",
+        appId: "1:379255642460:web:72de61f8c27d2b09bc0199",
+        measurementId: "G-G3GBEEC83E"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    const SECRET_KEY = "TRASH2026";
+    
+    document.getElementById('superAdminForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const secretKey = document.getElementById('secretKey').value;
+      const messageEl = document.getElementById('authMessage');
+      
+      if (!fullName || !email || !password || !confirmPassword || !secretKey) {
+        messageEl.textContent = 'Please fill all fields.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        messageEl.textContent = 'Passwords do not match.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      if (password.length < 6) {
+        messageEl.textContent = 'Password must be at least 6 characters.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      if (secretKey !== SECRET_KEY) {
+        messageEl.textContent = 'Invalid secret key.';
+        messageEl.style.color = '#ef4444';
+        return;
+      }
+      
+      messageEl.textContent = 'Creating super admin account...';
+      messageEl.style.color = '#3b82f6';
+      
+      try {
+        const existingDoc = await getDoc(doc(db, 'super_admins', email));
+        if (existingDoc.exists()) {
+          messageEl.textContent = 'Super admin with this email already exists.';
+          messageEl.style.color = '#ef4444';
+          return;
+        }
+        
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        await setDoc(doc(db, 'super_admins', email), {
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName,
+          role: 'super_admin',
+          warehouseId: 'all',
+          warehouseName: 'All Warehouses',
+          isActive: true,
+          createdAt: serverTimestamp()
+        });
+        
+        messageEl.textContent = 'Super Admin created successfully! Redirecting...';
+        messageEl.style.color = '#10b981';
+        
+        localStorage.setItem('adminUser', JSON.stringify({
+          email: email,
+          role: 'super_admin',
+          warehouseId: 'all',
+          warehouseName: 'All Warehouses'
+        }));
+        
+        setTimeout(() => {
+          window.location.href = './login.html';
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Signup error:', error);
+        messageEl.textContent = 'Signup failed. Please try again.';
+        messageEl.style.color = '#ef4444';
+      }
+    });
+  </script>
+</body>
+</html>

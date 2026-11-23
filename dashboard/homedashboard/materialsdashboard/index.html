@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Materials Dashboard</title>
+  <link rel="stylesheet" href="../../dashboard-base.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ========== Sidebar ========== */
+    .sidebar {
+      width: 280px !important;
+      background: #FFFFFF !important;
+      padding: 24px 16px !important;
+      border-right: 1px solid #E8ECF0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100vh !important;
+      position: sticky !important;
+      top: 0 !important;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-left: 8px;
+    }
+
+    .logo img {
+      width: 161px !important;
+      height: 78px !important;
+      object-fit: contain !important;
+    }
+
+    .logo h2, .logo div { display: none; }
+
+    .admin-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #8A8A98;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      padding-left: 8px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: #1A1A2E;
+      font-weight: 500;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .menu-item img { width: 40px; height: 40px; object-fit: contain; }
+
+    .menu-item .icon-emoji {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+
+    .menu-item:hover { background: #F0F2F5; }
+
+    .menu-item.active {
+      background: #00C76A; color: white;
+    }
+
+    .menu-item.active img { filter: brightness(0) saturate(100%) invert(100%); }
+
+    .sign-out { margin-top: auto !important; }
+
+    /* ========== Container ========== */
+    .container { display: flex; min-height: 100vh; background: #F5F7FA; }
+
+    .main { flex: 1; padding: 28px; background: #F5F7FA; overflow-y: auto; }
+
+    .page-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .page-head h1 { font-size: 28px; font-weight: 700; color: #1A1A2E; margin-bottom: 6px; }
+    .page-head p { color: #8A8A98; font-size: 14px; }
+
+    .badge {
+      background: #00C76A; color: white; padding: 10px 20px;
+      border-radius: 30px; font-size: 14px; font-weight: 500;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px; letter-spacing: 0.18em; text-transform: uppercase;
+      font-size: 0.72rem; color: #00C76A; font-weight: 700;
+    }
+
+    .cards {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+
+    .card {
+      background: #FFFFFF; border: 1px solid #E8ECF0;
+      border-radius: 16px; padding: 24px;
+    }
+
+    .card h4 { color: #8A8A98; font-size: 14px; margin-bottom: 12px; }
+    .card h2 { font-size: 36px; color: #1A1A2E; }
+
+    .panel {
+      background: #FFFFFF; border: 1px solid #E8ECF0;
+      border-radius: 16px; padding: 24px; margin-bottom: 24px;
+    }
+
+    .section-head {
+      display: flex; justify-content: space-between;
+      gap: 16px; align-items: center; margin-bottom: 24px;
+    }
+
+    .section-head h3 { margin: 0; font-size: 18px; font-weight: 600; color: #1A1A2E; }
+    .section-head p { margin: 6px 0 0; color: #8A8A98; }
+
+    .data-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+    .field { display: grid; gap: 8px; }
+    .field-wide { grid-column: 1 / -1; }
+
+    .field label, .search-group label {
+      font-size: 13px; font-weight: 600; color: #8A8A98;
+    }
+
+    .field input, .field select, .field textarea,
+    .search-group input, .search-group select {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid #E8ECF0; background: #FFFFFF;
+      color: #1A1A2E; font: inherit; outline: none;
+    }
+
+    .field textarea { resize: vertical; min-height: 96px; }
+
+    .field input:focus, .field select:focus, .field textarea:focus,
+    .search-group input:focus, .search-group select:focus {
+      border-color: #00C76A; box-shadow: 0 0 0 4px rgba(0, 199, 106, 0.12);
+    }
+
+    .form-actions {
+      grid-column: 1 / -1; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+
+    .form-message { min-height: 22px; margin: 0; color: #8A8A98; }
+
+    /* ========== Sizes Section - تصميم محسن ========== */
+    .sizes-section {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #FAFBFC 0%, #FFFFFF 100%);
+      border: 1px solid #E8ECF0;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-top: 4px;
+    }
+
+    .sizes-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1A1A2E;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #F0F2F5;
+    }
+
+    .sizes-title::before {
+      content: "📏";
+      font-size: 20px;
+    }
+
+    .sizes-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .sizes-grid.header {
+      margin-bottom: 8px;
+    }
+
+    .sizes-grid.header span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8A8A98;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .sizes-grid.header span:first-child {
+      text-align: left;
+      padding-left: 4px;
+    }
+
+    .size-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1A1A2E;
+      padding: 10px 0;
+    }
+
+    .size-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .size-dot.small { background: #4CAF50; }
+    .size-dot.medium { background: #FF9800; }
+    .size-dot.large { background: #2196F3; }
+
+    .size-row {
+      display: contents;
+    }
+
+    .size-row input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #E8ECF0;
+      background: #FFFFFF;
+      color: #1A1A2E;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .size-row input:focus {
+      border-color: #00C76A;
+      box-shadow: 0 0 0 3px rgba(0, 199, 106, 0.10);
+    }
+
+    .size-row input:first-of-type {
+      text-align: left;
+    }
+
+    @media (max-width: 720px) {
+      .sizes-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .sizes-grid.header { display: none; }
+      .size-label { padding: 4px 0; }
+    }
+
+    /* ========== Toolbar ========== */
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.8fr) auto;
+      gap: 14px; align-items: end;
+    }
+
+    .search-group { display: grid; gap: 8px; }
+    .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ========== Buttons ========== */
+    .primary-button, .ghost-button, .row-action {
+      border: 0; border-radius: 12px; font: inherit;
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .primary-button {
+      padding: 12px 18px; color: #fff; background: #00C76A;
+      box-shadow: 0 4px 12px rgba(0, 199, 106, 0.2);
+    }
+
+    .ghost-button {
+      padding: 12px 16px; color: #1A1A2E; background: #F0F2F5;
+      border: 1px solid #E8ECF0;
+    }
+
+    .primary-button:hover, .ghost-button:hover, .row-action:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-button:hover { background: #00b05a; }
+    .ghost-button:hover { background: #E8ECF0; }
+
+    /* ========== Table ========== */
+    .table-panel { padding-top: 20px; }
+
+    .table-headline {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; margin-bottom: 20px;
+    }
+
+    .table-headline h3 { font-size: 18px; font-weight: 600; color: #1A1A2E; }
+    .table-headline p { margin: 6px 0 0; color: #8A8A98; }
+
+    .table-shell { width: 100%; overflow: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
+
+    th {
+      text-align: left; color: #8A8A98; font-size: 13px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 14px 12px; border-bottom: 1px solid #E8ECF0;
+    }
+
+    td {
+      padding: 14px 12px; border-bottom: 1px solid #F0F2F5;
+      vertical-align: top; color: #1A1A2E;
+    }
+
+    tbody tr:hover { background: rgba(0, 199, 106, 0.04); }
+
+    .material-type-icon {
+      width: 32px; height: 32px; object-fit: contain; vertical-align: middle;
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 6px 14px; border-radius: 30px; font-size: 13px; font-weight: 600;
+    }
+
+    .status-badge.active { color: #00A85A; background: #E6F7EE; }
+    .status-badge.inactive { color: #D32F2F; background: #FFE8E8; }
+
+    .row-action {
+      padding: 9px 13px; color: white; background: #00C76A;
+    }
+
+    .row-action:hover { background: #00b05a; }
+
+    .empty-state { text-align: center; padding: 28px 12px; color: #8A8A98; }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1100px) {
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .data-form { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar-actions { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 720px) {
+      .container { flex-direction: column; }
+      .sidebar {
+        width: 100% !important; height: auto;
+        border-right: none; border-bottom: 1px solid #E8ECF0;
+      }
+      .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+      .main { padding: 20px 16px 28px; }
+      .page-head, .section-head, .form-actions {
+        flex-direction: column; align-items: flex-start;
+      }
+      .cards, .toolbar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="../assets/trash.svg" alt="TRASH TO CASH">
+      </div>
+
+      <p class="admin-label">Admin</p>
+
+      <nav class="sidebar-nav">
+        <a href="../homedashboard/index.html" class="menu-item">
+          <img src="../assets/home.svg" alt="Home"> Home
+        </a>
+        <a href="../reportdashboard/index.html" class="menu-item">
+          <img src="../assets/report.svg" alt="Report"> Report
+        </a>
+        <a href="../employeedashboard/index 2.html" class="menu-item">
+          <img src="../assets/employe.svg" alt="Employee"> Employee
+        </a>
+        <a href="../reviewsdashboard/index.html" class="menu-item">
+          <img src="../assets/review.svg" alt="Reviews"> Reviews
+        </a>
+        <a href="../warehousedashboard/index.html" class="menu-item">
+          <img src="../assets/warehouse.svg" alt="Warehouse RP"> Warehouse RP
+        </a>
+        <a href="../materialsdashboard/index.html" class="menu-item active">
+          <img src="../assets/matierial.svg" alt="Materials"> Materials
+        </a>
+        <a href="../../login.html" class="menu-item sign-out" data-sign-out>
+          <span class="icon-emoji">🚪</span> Sign Out
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="page-head">
+        <div>
+          <p class="eyebrow">Materials</p>
+          <h1>Materials catalog</h1>
+          <p>Live Firestore management for recycling materials, status, type, and sizes.</p>
+        </div>
+        <div class="badge">Connected to Firebase</div>
+      </section>
+
+      <section class="cards stats-grid" aria-label="Materials summary">
+        <article class="card">
+          <h4>Total Materials</h4>
+          <h2 data-metric="total">0</h2>
+        </article>
+        <article class="card">
+          <h4>Active</h4>
+          <h2 data-metric="active">0</h2>
+        </article>
+        <article class="card">
+          <h4>Inactive</h4>
+          <h2 data-metric="inactive">0</h2>
+        </article>
+      </section>
+
+      <section class="panel form-panel">
+        <div class="section-head">
+          <div>
+            <h3>Add material</h3>
+            <p>Create a new material with auto-generated ID and 3 sizes.</p>
+          </div>
+          <button type="button" class="ghost-button" id="resetMaterialForm">Reset</button>
+        </div>
+
+        <form id="materialForm" class="data-form" novalidate>
+          <div class="field">
+            <label for="type">Type</label>
+            <input type="text" id="type" name="type" list="typeList" placeholder="Enter or select material type" required>
+            <datalist id="typeList">
+              <option value="Plastic">
+              <option value="Glass">
+              <option value="Cans">
+            </datalist>
+          </div>
+
+          <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+
+          <!-- ✅ Sizes بتصميم جديد متناسق -->
+          <div class="sizes-section">
+            <div class="sizes-title">Sizes (Weight in grams & Points per item)</div>
+            
+            <div class="sizes-grid header">
+              <span></span>
+              <span>Size Name</span>
+              <span>Weight (g)</span>
+              <span>Points</span>
+            </div>
+
+            <div class="sizes-grid">
+              <div class="size-label">
+                <span class="size-dot small"></span> Small
+              </div>
+              <div class="size-row">
+                <input type="text" id="size1Name" placeholder="Small" value="Small" required>
+                <input type="number" id="size1Weight" placeholder="20" value="20" min="1" required>
+                <input type="number" id="size1Points" placeholder="2" value="2" min="0" required>
+              </div>
+            </div>
+
+            <div class="sizes-grid">
+              <div class="size-label">
+                <span class="size-dot medium"></span> Medium
+              </div>
+              <div class="size-row">
+                <input type="text" id="size2Name" placeholder="Medium" value="Medium" required>
+                <input type="number" id="size2Weight" placeholder="35" value="35" min="1" required>
+                <input type="number" id="size2Points" placeholder="3" value="3" min="0" required>
+              </div>
+            </div>
+
+            <div class="sizes-grid">
+              <div class="size-label">
+                <span class="size-dot large"></span> Large
+              </div>
+              <div class="size-row">
+                <input type="text" id="size3Name" placeholder="Large" value="Large" required>
+                <input type="number" id="size3Weight" placeholder="50" value="50" min="1" required>
+                <input type="number" id="size3Points" placeholder="5" value="5" min="0" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="field field-wide">
+            <label for="note">Note</label>
+            <textarea id="note" name="note" rows="3" placeholder="Optional note"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <p id="materialFormMessage" class="form-message"></p>
+            <button type="submit" class="primary-button">Save material</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel toolbar">
+        <div class="search-group">
+          <label for="search">Search</label>
+          <input type="text" id="search" placeholder="Search by id, type, name, status, or note">
+        </div>
+
+        <div class="search-group compact">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="toolbar-actions">
+          <button type="button" class="ghost-button" id="clearFilters">Clear</button>
+          <button type="button" class="primary-button" id="exportBtn">Export CSV</button>
+        </div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-headline">
+          <div>
+            <h3>Materials table</h3>
+            <p id="resultCount">Loading material records...</p>
+          </div>
+        </div>
+
+        <div class="table-shell">
+          <table id="materialTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Material</th>
+                <th>Status</th>
+                <th>Note</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../../api.js"></script>
+  <script type="module" src="./materials.js"></script>
+</body>
+</html>

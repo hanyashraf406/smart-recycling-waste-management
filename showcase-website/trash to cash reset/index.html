@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Trash To Cash</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="card">
+
+        <!-- LEFT SIDE -->
+        <div class="left">
+
+            <div class="logo-area">
+                <img src="../images/logo.svg" alt="Logo" class="logo-img">
+            </div>
+
+            <h2>Reset Password</h2>
+            <p class="subtitle">Enter your new password</p>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="newPassword" placeholder="New Password" required autocomplete="off">
+                <i class="fa-regular fa-eye toggle" id="toggleNew"></i>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" required autocomplete="off">
+                <i class="fa-regular fa-eye toggle" id="toggleConfirm"></i>
+            </div>
+
+            <button type="button" id="resetBtn" class="signin-btn">Reset Password</button>
+
+            <div id="message" style="display:none;"></div>
+
+            <p class="login-link">
+                <a href="../trash to cash sign in/index.html">Back to Sign In</a>
+            </p>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="right">
+            <div class="steps">
+                <div class="step done">
+                    <span class="step-dot"></span>
+                    <span class="step-text">Email Address</span>
+                </div>
+                <div class="step done">
+                    <span class="step-dot"></span>
+                    <span class="step-text">OTP</span>
+                </div>
+                <div class="step active">
+                    <span class="step-dot"></span>
+                    <span class="step-text">New Password</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reset Password Logic -->
+    <script src="script.js"></script>
+</body>
+
+</html>
